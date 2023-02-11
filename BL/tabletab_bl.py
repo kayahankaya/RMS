@@ -46,10 +46,15 @@ class Order:
     
     def fillproductlist(self):
 
+        liste = []
         for row in self.list_products:
             self.product_name = row[0]
             self.product_price = row[1]
-            self.tree_productstab.insert('', tk.END, values=(self.product_name, self.product_price))
+            self.product_name,self.product_price
+            liste.append((self.product_name,self.product_price))
+
+        return liste
+            
 
     def on_select(self):
 
@@ -60,6 +65,13 @@ class Order:
         return self.default_db_merge
 
     def sel(self):
+
+        self.list_products = ProductRepository().get_allproducts()
+        self.tree_productstab.delete(*self.tree_productstab.get_children())
+        for row in self.list_products:
+            self.product_name = row[0]
+            self.product_price = row[1]
+            self.tree_productstab.insert('', tk.END, values=(self.product_name, self.product_price))
         
         selectedtable = self.var.get()
         self.tree_tabletab.delete(*self.tree_tabletab.get_children())
@@ -69,8 +81,6 @@ class Order:
 
         textvar_order = "Table " + str(selectedtable) +"'s Orders"
         self.order_label.config(text=textvar_order)
-
-
 
         list = []
         
@@ -147,8 +157,6 @@ class Order:
         self.remainingcheck_entry.delete(0, tk.END)
         self.remainingcheck_entry.insert(0, remaining_check_int)
 
-
-
     def delete_order(self):
         
         temp_item = self.tree_tabletab.item(self.tree_tabletab.selection()[0])['values'][0]
@@ -203,11 +211,11 @@ class Order:
     def make_rbtn(self):
 
         column_table = 3
-        row_table = Order.table_number // column_table # 3
-        last_row = Order.table_number % column_table # 0
+        row_table = Order.table_number // column_table 
+        last_row = Order.table_number % column_table 
         if last_row >= 1:
             row_table += 1
-        for k in range(0,row_table): #k 0 1 2 3 row
+        for k in range(0,row_table): 
             if k == (row_table-1): 
                 if last_row >= 1:
                     column_table = last_row      

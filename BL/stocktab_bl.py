@@ -1,5 +1,4 @@
 import tkinter as tk 
-from tkinter import ttk 
 from tkinter import messagebox
 from DAL.Sql.Repository.StockRepository import StockRepository
 from DAL.Sql.Repository.ProductRepository import ProductRepository
@@ -23,7 +22,6 @@ class Stocktabb_bl:
         self.entry_product_stock_name = entry_product_stock_name
         self.entry_product_stock_price = entry_product_stock_price
         self.newproductlist_stock = newproductlist_stock
-        
 
     def fillcolumn(self,stock_name, stock_weight, stock_unit):
         self.tree_stocktab.insert('', tk.END, values=(str(stock_name).capitalize(), stock_weight, stock_unit))

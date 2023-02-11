@@ -28,6 +28,9 @@ def main(nb):
     infoframe = ttk.Frame(financetree_fr, borderwidth=10, style="BW.TFrame")
     infoframe.pack(fill=tk.Y)
 
+    info_change_fr = ttk.Frame(financetab, borderwidth=10, style="BW.TFrame")
+    info_change_fr.pack(anchor=tk.CENTER,fill=tk.X)
+
     columns_tablegroup = ('Name','Count','Total')
 
     tree_finances = ttk.Treeview(financetree_fr, columns=columns_tablegroup, show='headings')
@@ -68,8 +71,14 @@ def main(nb):
     canvas.get_tk_widget().pack(fill=tk.X)
 
     # Create the Tkinter canvas to display the graph
+    var = tk.StringVar(value='People')
 
-    financeobj = Financetab_bl(start_time_var,end_time_var,cal1,cal2,tree_finances,ax,canvas)
+    elements = ['People','Amount']
+    dropdown = tk.OptionMenu(info_change_fr , var, *elements)
+    dropdown.config(width=15 ,height=1,font=("Arial", 8), background="grey", activebackground="white")
+    dropdown.pack()
+
+    financeobj = Financetab_bl(start_time_var,end_time_var,cal1,cal2,tree_finances,ax,canvas,info_change_fr,var,dropdown)
 
     cal1.bind("<<DateEntrySelected>>", financeobj.update_cal2)
     cal2.bind("<<DateEntrySelected>>")
@@ -91,6 +100,8 @@ def main(nb):
 
     getmonthly_graph_btn = tk.Button(graphframe, text='Get Montly Graph', width=20, command=lambda: financeobj.monthly_graph())
     getmonthly_graph_btn.pack(pady=5,padx=100,side=tk.RIGHT)
+
+    financeobj.change_input_graph()
 
 if __name__ == "__main__":
     main()

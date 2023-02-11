@@ -74,19 +74,32 @@ class ReportRepository:
 
         return temp_list
 
-    def daily_graph_report(self,date1,date2):
+    def daily_graph_report(self,date1,date2,amount_value):
 
         date_list = []
         total_list = []
 
-        cur = self.dbcontext.cursor()
-        cur.execute('''
-        SELECT DATE(bills.created_at), SUM(paidby_cash + paidby_cc) 
-        FROM bills 
-        WHERE bills.bill_status = 'Close' AND DATE(bills.created_at) BETWEEN DATE(%s) AND DATE(%s) 
-        GROUP BY DATE(bills.created_at) 
-        ORDER BY DATE(bills.created_at) DESC''', (date1,date2))
-        closed_orders = cur.fetchall()
+        if amount_value == 'Amount':
+
+            cur = self.dbcontext.cursor()
+            cur.execute('''
+            SELECT DATE(bills.created_at), SUM(paidby_cash + paidby_cc) 
+            FROM bills 
+            WHERE bills.bill_status = 'Close' AND DATE(bills.created_at) BETWEEN DATE(%s) AND DATE(%s) 
+            GROUP BY DATE(bills.created_at) 
+            ORDER BY DATE(bills.created_at) DESC''', (date1,date2))
+            closed_orders = cur.fetchall()
+
+        else:
+
+            cur = self.dbcontext.cursor()
+            cur.execute('''
+            SELECT DATE(bills.created_at), SUM(head_count) 
+            FROM bills 
+            WHERE bills.bill_status = 'Close' AND DATE(bills.created_at) BETWEEN DATE(%s) AND DATE(%s) 
+            GROUP BY DATE(bills.created_at) 
+            ORDER BY DATE(bills.created_at) DESC''', (date1,date2))
+            closed_orders = cur.fetchall()
         
         for i in closed_orders:
             created_at = i[0]
@@ -96,19 +109,32 @@ class ReportRepository:
         
         return (date_list, total_list)
 
-    def weekly_graph_report(self,date1,date2):
+    def weekly_graph_report(self,date1,date2,amount_value):
 
         date_list = []
         total_list = []
 
-        cur = self.dbcontext.cursor()
-        cur.execute('''
-        SELECT WEEKOFYEAR(bills.created_at), SUM(paidby_cash + paidby_cc) 
-        FROM bills 
-        WHERE bills.bill_status = 'Close' AND DATE(bills.created_at) BETWEEN DATE(%s) AND DATE(%s) 
-        GROUP BY WEEKOFYEAR(bills.created_at) 
-        ORDER BY WEEKOFYEAR(bills.created_at) DESC''', (date1,date2))
-        closed_orders = cur.fetchall()
+        if amount_value == 'Amount':
+
+            cur = self.dbcontext.cursor()
+            cur.execute('''
+            SELECT WEEKOFYEAR(bills.created_at), SUM(paidby_cash + paidby_cc) 
+            FROM bills 
+            WHERE bills.bill_status = 'Close' AND DATE(bills.created_at) BETWEEN DATE(%s) AND DATE(%s) 
+            GROUP BY WEEKOFYEAR(bills.created_at) 
+            ORDER BY WEEKOFYEAR(bills.created_at) DESC''', (date1,date2))
+            closed_orders = cur.fetchall()
+
+        else:
+
+            cur = self.dbcontext.cursor()
+            cur.execute('''
+            SELECT WEEKOFYEAR(bills.created_at), SUM(head_count) 
+            FROM bills 
+            WHERE bills.bill_status = 'Close' AND DATE(bills.created_at) BETWEEN DATE(%s) AND DATE(%s) 
+            GROUP BY WEEKOFYEAR(bills.created_at) 
+            ORDER BY WEEKOFYEAR(bills.created_at) DESC''', (date1,date2))
+            closed_orders = cur.fetchall()
 
         for i in closed_orders:
             created_at = i[0]
@@ -118,19 +144,32 @@ class ReportRepository:
          
         return (date_list, total_list)
 
-    def monthly_graph_report(self,date1,date2):
+    def monthly_graph_report(self,date1,date2,amount_value):
 
         date_list = []
         total_list = []
 
-        cur = self.dbcontext.cursor()
-        cur.execute('''
-        SELECT MONTHNAME(bills.created_at), SUM(paidby_cash + paidby_cc) 
-        FROM bills 
-        WHERE bills.bill_status = 'Close' AND DATE(bills.created_at) BETWEEN DATE(%s) AND DATE(%s) 
-        GROUP BY MONTHNAME(bills.created_at) 
-        ORDER BY MONTHNAME(bills.created_at) DESC''', (date1,date2))
-        closed_orders = cur.fetchall()
+        if amount_value == 'Amount':
+
+            cur = self.dbcontext.cursor()
+            cur.execute('''
+            SELECT MONTHNAME(bills.created_at), SUM(paidby_cash + paidby_cc) 
+            FROM bills 
+            WHERE bills.bill_status = 'Close' AND DATE(bills.created_at) BETWEEN DATE(%s) AND DATE(%s) 
+            GROUP BY MONTHNAME(bills.created_at) 
+            ORDER BY MONTHNAME(bills.created_at) DESC''', (date1,date2))
+            closed_orders = cur.fetchall()
+
+        else:
+
+            cur = self.dbcontext.cursor()
+            cur.execute('''
+            SELECT MONTHNAME(bills.created_at), SUM(head_count)  
+            FROM bills 
+            WHERE bills.bill_status = 'Close' AND DATE(bills.created_at) BETWEEN DATE(%s) AND DATE(%s) 
+            GROUP BY MONTHNAME(bills.created_at) 
+            ORDER BY MONTHNAME(bills.created_at) DESC''', (date1,date2))
+            closed_orders = cur.fetchall()
 
         for i in closed_orders:
             created_at = i[0]
@@ -139,7 +178,3 @@ class ReportRepository:
             total_list.append(int(total))
             
         return (date_list, total_list)
-
-
-
-

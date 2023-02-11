@@ -26,7 +26,7 @@ userentry.focus()
 userentry.place(x=200 , y=223)
 
 passentry = tk.Entry(win, width=40, show="*" ,textvariable = password)
-passentry.insert(tk.END, '4evdhpmjq21X')
+passentry.insert(tk.END, 'Istanbul.ngykkaya91')
 passentry.place(x=200 , y=260)
 
 loginobj = Login_bl(user_name,password,win,userentry,passentry)

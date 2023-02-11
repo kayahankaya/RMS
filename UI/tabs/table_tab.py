@@ -136,8 +136,6 @@ def main(nb):
     
     orderobj.update_options2()
 
-    orderobj.fillproductlist()
-
     transfer_table = tk.Button(part1_1_2, text='Transfer to >>>',height=1, width=15, command=lambda: orderobj.change_table())
     transfer_table.grid(row=0,column=0)
 
@@ -162,6 +160,9 @@ def main(nb):
 
     orderobj.make_rbtn()
     orderobj.sel()
+
+    for i in orderobj.fillproductlist():
+        tree_productstab.insert('', tk.END, values=(i))
 
 if __name__ == "__main__":
     main()
