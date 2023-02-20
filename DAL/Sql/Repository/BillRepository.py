@@ -64,14 +64,21 @@ class BillRepository:
 
         return temp_bill
 
-    def update_bill_mustpay_by_table_name(self,rounded_total_withtax,selectedtable):
+   #def update_bill_mustpay_by_table_name(self,selectedtable):
 
-        cur = self.dbcontext.cursor()   
-        cur.execute("""
-        UPDATE bills 
-        SET bills.mustpay = %s 
-        WHERE table_name = %s AND bill_status = 'Open'""", (rounded_total_withtax,selectedtable))
-        self.dbcontext.commit()
+      ###  cur = self.dbcontext.cursor()   
+      ###  cur.execute("""
+      ###  UPDATE bills
+       ### SET bills.mustpay = 
+       ### (SELECT SUM(products.product_price)
+      ###  FROM products
+      ###  INNER JOIN orders ON products.product_id = orders.product_id
+      ###  WHERE orders.order_status = 'Unpaid' AND orders.bill_id = (
+      ###  SELECT bills.bill_id
+       ### FROM bills
+       ### WHERE bills.table_name = %s AND bill_status = 'Open'))
+       ### WHERE bills.table_name = %s""", (selectedtable,selectedtable))
+      ###  self.dbcontext.commit()
 
     def get_paids_by_table_name(self,selectedtable):
 

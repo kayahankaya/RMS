@@ -1,8 +1,9 @@
 import tkinter as tk 
-from tkinter import ttk 
+from tkinter import ttk
+from tkinter import messagebox
 from BL.stocktab_bl import Stocktabb_bl
 
-def main(nb):
+def main(nb,tree_productstab):
 
     stocktab = ttk.Frame(nb)
     stocktab.pack(fill='both', expand=True)
@@ -119,12 +120,38 @@ def main(nb):
     update_product_stock = tk.Button(newproductlist_stock, text='Update Product', width=25, command=lambda: stockobj.update_product())
     update_product_stock.grid(row=6,column=0,padx=5,pady=5,sticky='nsew')
 
+    update_product_stock = tk.Button(newproductlist_stock, text='Delete Product', width=25, command=lambda: stockobj.delete_product())
+    update_product_stock.grid(row=7,column=0,padx=5,pady=5,sticky='nsew')
+
     bottom_stock = ttk.Frame(stocktab)
     bottom_stock.grid(row=2,column=0,columnspan=3,padx=5,pady=10,sticky='nsew')
 
     var = tk.StringVar()
 
-    stockobj = Stocktabb_bl(stocktab,tree_stocktab,entry_stock_name,entry_stock_weight,entry_stock_unit,var,tree_stocktab_newrecipe,tree_product_stock,entry_adding_stock_weight,entry_product_name,entry_product_price,entry_product_category,entry_product_stock_name,entry_product_stock_price,newproductlist_stock)
+    def ask_question(textvar1,textvar2):
+        return messagebox.askquestion(textvar1,textvar2)
+
+    def show_error(textvar1,textvar2):
+        messagebox.showerror(textvar1,textvar2)
+    
+    def show_info(textvar1,textvar2):
+        messagebox.showinfo(textvar1,textvar2)
+
+    def delete_entry(entry):
+        entry.delete(0, tk.END)
+
+    def option_menu(frame,var,liste):
+        return tk.OptionMenu(frame, var, *liste)
+
+    def insert_tree(tree,*args):
+        tree.insert('', tk.END, values=(args))
+
+    stockobj = Stocktabb_bl(stocktab,tree_stocktab,entry_stock_name,
+    entry_stock_weight,entry_stock_unit,var,tree_stocktab_newrecipe,
+    tree_product_stock,entry_adding_stock_weight,entry_product_name,
+    entry_product_price,entry_product_category,entry_product_stock_name,
+    entry_product_stock_price,newproductlist_stock,ask_question,show_error,
+    show_info,delete_entry,option_menu,insert_tree,tree_productstab)
 
     add_product_b = tk.Button(bottom_stock, text='Add Product', width=15, command=lambda: stockobj.add_product())
     add_product_b.pack()

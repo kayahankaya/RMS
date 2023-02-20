@@ -119,6 +119,15 @@ class ProductRepository:
         product_id = cur.fetchone()
 
         return product_id
+    
+    def delete_product_by_product_id(self,product_id):
+
+        cur = self.dbcontext.cursor()
+        cur.execute("""
+        DELETE FROM products 
+        WHERE products.product_id = %s""", (product_id))
+
+        self.dbcontext.commit()
 
 
 

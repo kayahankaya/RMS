@@ -78,7 +78,14 @@ def main(nb):
     dropdown.config(width=15 ,height=1,font=("Arial", 8), background="grey", activebackground="white")
     dropdown.pack()
 
-    financeobj = Financetab_bl(start_time_var,end_time_var,cal1,cal2,tree_finances,ax,canvas,info_change_fr,var,dropdown)
+    def option_menu(frame,var,liste):
+        return tk.OptionMenu(frame, var, *liste)
+
+    def insert_tree(tree,*args):
+        tree.insert('', tk.END, values=(args))
+
+    financeobj = Financetab_bl(start_time_var,end_time_var,cal1,cal2,tree_finances,
+    ax,canvas,info_change_fr,var,dropdown,option_menu,insert_tree)
 
     cal1.bind("<<DateEntrySelected>>", financeobj.update_cal2)
     cal2.bind("<<DateEntrySelected>>")

@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import messagebox
 from BL.login_bl import Login_bl
 
 win = tk.Tk()
@@ -29,7 +30,13 @@ passentry = tk.Entry(win, width=40, show="*" ,textvariable = password)
 passentry.insert(tk.END, 'Istanbul.ngykkaya91')
 passentry.place(x=200 , y=260)
 
-loginobj = Login_bl(user_name,password,win,userentry,passentry)
+def show_error(textvar1,textvar2):
+    messagebox.showerror(textvar1,textvar2)
+
+def show_info(textvar1,textvar2):
+    messagebox.showinfo(textvar1,textvar2)
+
+loginobj = Login_bl(user_name,password,win,userentry,passentry,show_error,show_info)
 
 btn_login = tk.Button(win, text = "Login" ,font='Verdana 10 bold',command = loginobj.login)
 btn_login.place(x=200, y=293)

@@ -1,33 +1,43 @@
-from tkinter import messagebox
 from DAL.Sql.Repository.UserRepository import UserRepository
-from BL.Dashboard import Dashboard
+from UI.tabs.Dashboard import Dashboard
 
 class Login_bl:
-    def __init__(self,user_name,password,win,userentry,passentry):
+    
+    def __init__(self,*args):
 
-        self.user_name = user_name
-        self.password = password
-        self.win = win
-        self.userentry = userentry
-        self.passentry = passentry
+        self.user_name = args[0]
+        self.password = args[1]
+        self.win = args[2]
+        self.userentry = args[3]
+        self.passentry = args[4]
+        self.show_error = args[5]
+        self.show_info = args[6]
 
     def login(self):
 
         if self.user_name.get()=="" or self.password.get()=="":
-            messagebox.showerror("Error","Enter User Name And Password",parent = self.win)    
+            textvar1 = "Error"
+            textvar2 = "Enter User Name And Password"
+            self.show_error(textvar1,textvar2)
         else:
             user_repository = UserRepository()
             selected_user = user_repository.get_user_by_username(self.userentry.get())
             if selected_user.password == self.passentry.get() and selected_user.user_id == 1:
-                messagebox.showinfo("Success" , "Successfully Admin Login" , parent = self.win)
+                textvar1 = "Success"
+                textvar2 = "Successfully Admin Login"
+                self.show_info(textvar1,textvar2)
                 self.win.destroy() 
-                Dashboard.dash_admin()
+                Dashboard().dash_admin()
             elif selected_user.password == self.passentry.get() and selected_user.user_id != 1:
-                messagebox.showinfo("Success" , "Successfully User Login" , parent = self.win)
+                textvar1 = "Success"
+                textvar2 = "Successfully User Login"
+                self.show_info(textvar1,textvar2)
                 self.win.destroy() 
-                Dashboard.dash_user()
+                Dashboard().dash_user()
             else:
-                messagebox.showerror("Error" , f"ERROR : {str('Error')}", parent = self.win)
+                textvar1 = "Error"
+                textvar2 = f"ERROR : {str('Error')}"
+                self.show_error(textvar1,textvar2,self.win)
 
     def clear(self):
         self.userentry.delete(0,)

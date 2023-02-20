@@ -1,36 +1,40 @@
-import tkinter as tk 
-from tkinter import messagebox
 from DAL.Sql.Repository.StockRepository import StockRepository
 from DAL.Sql.Repository.ProductRepository import ProductRepository
 
-class Stocktabb_bl: 
+class Stocktabb_bl(): 
 
-    def __init__(self,stocktab,tree_stocktab,entry_stock_name,entry_stock_weight,entry_stock_unit,var,tree_stocktab_newrecipe,tree_product_stock,entry_adding_stock_weight,entry_product_name,entry_product_price,entry_product_category,entry_product_stock_name,entry_product_stock_price,newproductlist_stock):
+    def __init__(self,*args):
+
+        self.stocktab = args[0]
+        self.tree_stocktab = args[1]
+        self.entry_stock_name = args[2]
+        self.entry_stock_weight = args[3]
+        self.entry_stock_unit = args[4]
+        self.var = args[5]
+        self.tree_stocktab_newrecipe = args[6]
+        self.tree_product_stock = args[7]
+        self.entry_adding_stock_weight = args[8]
+        self.entry_product_name = args[9]
+        self.entry_product_price = args[10]
+        self.entry_product_category = args[11]
+        self.entry_product_stock_name = args[12]
+        self.entry_product_stock_price = args[13]
+        self.newproductlist_stock = args[14]
+        self.ask_question = args[15]
+        self.show_error = args[16]
+        self.show_info = args[17]
+        self.delete_entry = args[18]
+        self.option_menu = args[19]
+        self.insert_tree = args[20]
+        self.tree_productstab = args[21]
         
-        self.stocktab = stocktab
-        self.tree_stocktab = tree_stocktab
-        self.entry_stock_name = entry_stock_name
-        self.entry_stock_weight = entry_stock_weight
-        self.entry_stock_unit = entry_stock_unit
-        self.var = var
-        self.tree_stocktab_newrecipe = tree_stocktab_newrecipe
-        self.tree_product_stock = tree_product_stock
-        self.entry_adding_stock_weight = entry_adding_stock_weight
-        self.entry_product_name = entry_product_name
-        self.entry_product_price = entry_product_price
-        self.entry_product_category = entry_product_category
-        self.entry_product_stock_name = entry_product_stock_name
-        self.entry_product_stock_price = entry_product_stock_price
-        self.newproductlist_stock = newproductlist_stock
-
     def fillcolumn(self,stock_name, stock_weight, stock_unit):
-        self.tree_stocktab.insert('', tk.END, values=(str(stock_name).capitalize(), stock_weight, stock_unit))
+        self.insert_tree(self.tree_stocktab,str(stock_name).capitalize(), stock_weight, stock_unit)
 
     def displaySelectedItem(self,event):
-
-        self.entry_stock_name.delete(0, tk.END)
-        self.entry_stock_weight.delete(0, tk.END)
-        self.entry_stock_unit.delete(0, tk.END)
+        self.delete_entry(self.entry_stock_name)
+        self.delete_entry(self.entry_stock_weight)
+        self.delete_entry(self.entry_stock_unit)
 
         selectedItem = self.tree_stocktab.selection()
 
@@ -56,14 +60,19 @@ class Stocktabb_bl:
 
         if result1:
             if get_stock_weight == '':
-                messagebox.showerror("Error for 'Adding Stock Weight'",'Please enter a value for Adding Stock Weight', parent = self.stocktab)
+                textvar1 = "Error for 'Adding Stock Weight'"
+                textvar2 = 'Please enter a value for Adding Stock Weight'
+                self.show_error(textvar1,textvar2)
             else:
                 StockRepository().update_stock_by_stock_name_and_stock_weight(get_stock_weight, get_stock_name)
-                messagebox.showinfo("Stock updated!" , 'Stock Name: '+
-                str(get_stock_name)+'\nStock Weight: '+str(get_stock_weight)+' '+str(get_stock_unit)+'\n\nUpdated' , parent = self.stocktab)
+                textvar1 = "Stock updated!"
+                textvar2 = 'Stock Name: '+str(get_stock_name)+'\nStock Weight: '+str(get_stock_weight)+' '+str(get_stock_unit)+'\n\nUpdated'
+                self.show_info(textvar1,textvar2)
         else:
             StockRepository().insert_stock_by_stock_name_stock_weight_stock_unit(get_stock_name,get_stock_weight,get_stock_unit)
-            messagebox.showinfo("New stock added!" , 'Stock Name: '+str(get_stock_name)+'\nStock Weight: '+str(get_stock_weight)+' '+str(get_stock_unit)+'\n\nAdded' , parent = self.stocktab)
+            textvar1 = "New stock added!"
+            textvar2 = 'Stock Name: '+str(get_stock_name)+'\nStock Weight: '+str(get_stock_weight)+' '+str(get_stock_unit)+'\n\nAdded'
+            self.show_info(textvar1,textvar2)
         # refresh the tree with updated data
         self.populate_tree()
 
@@ -75,44 +84,67 @@ class Stocktabb_bl:
         self.populate_tree()
 
     def add_recipe(self):
+
         get_stock_name = self.entry_stock_name.get()
         get_adding_stock_weight = self.entry_adding_stock_weight.get()
         get_stock_unit = self.entry_stock_unit.get()
+        
+        textvar1 = "New ingredient added!"
+        textvar2 = 'Igredient Name: '+str(get_stock_name)+'\nIngredient Weight: '+str(get_adding_stock_weight)+'\nIngredient Unit: '+str(get_stock_unit)
+        answer = self.ask_question(textvar1,textvar2)
 
-        self.tree_stocktab_newrecipe.insert('', tk.END, values=(str(get_stock_name).capitalize(), get_adding_stock_weight, get_stock_unit))
+        if answer == 'yes':
+            self.insert_tree(self.tree_stocktab_newrecipe,str(get_stock_name).capitalize(), get_adding_stock_weight, get_stock_unit)
+
+
 
     def delete_recipe(self):
         self.tree_stocktab_newrecipe.delete(self.tree_stocktab_newrecipe.selection()[0])
 
     def add_product(self):
+
         product_name = self.entry_product_name.get()
         product_price = self.entry_product_price.get()
+
         if self.entry_product_category.get() != '':
             product_category = self.entry_product_category.get()
         else:
             product_category = str(self.var.get())
-        ProductRepository().insert_product(product_name, product_price, product_category)
-        self.product_list_in_stocktab()
-        self.update_dropdown()
+
+        textvar1 = "New product added!"
+        textvar2 = 'Product Name: '+str(product_name)+'\nProduct Price: '+str(product_price)+'\n\nAdded'
+        answer = self.ask_question(textvar1,textvar2)
+
+        if answer == 'yes':
+
+            ProductRepository().insert_product(product_name, product_price, product_category)
+            self.product_list_in_stocktab()
+            self.update_dropdown()
+
+            self.tree_productstab.delete(*self.tree_productstab.get_children())
+            rows = ProductRepository().get_allproducts()
+            for row in rows:
+                self.insert_tree(self.tree_productstab,row[0], row[1])
+
 
     def product_list_in_stocktab(self,*args):
         self.tree_product_stock.delete(*self.tree_product_stock.get_children())
         rows = ProductRepository().get_allproducts_by_category(self.var.get())
         for row in rows:
-            self.tree_product_stock.insert('', tk.END, values=(row[0], row[1]))
+            self.insert_tree(self.tree_product_stock,row[0], row[1])
 
     def update_dropdown(self):
         options = []
         for opt in ProductRepository().get_allcategory_of_products():
             options.append(opt[0])
-        dropdown = tk.OptionMenu(self.newproductlist_stock, self.var, *options)
+        dropdown = self.option_menu(self.newproductlist_stock,self.var, options)
         dropdown.config(width=15 ,height=1,font=("Arial", 8), background="grey", activebackground="white")
         dropdown.grid(row=0, column=0,padx=5,pady=5)
 
     def display_product_stock(self,event):
 
-        self.entry_product_stock_name.delete(0, tk.END)
-        self.entry_product_stock_price.delete(0, tk.END)
+        self.delete_entry(self.entry_product_stock_name)
+        self.delete_entry(self.entry_product_stock_price)
 
         selectedItem = self.tree_product_stock.selection()
 
@@ -126,11 +158,51 @@ class Stocktabb_bl:
         product_name = self.entry_product_stock_name.get()
         product_id = ProductRepository().get_product_id_by_product_name(product_name)
         product_price = self.entry_product_stock_price.get()
-        ProductRepository().update_product_price_by_product_id(str(product_price),product_id[0])
-        ProductRepository().update_product_name_by_product_id(str(product_name),product_id[0])
-        self.product_list_in_stocktab()
-        self.entry_product_stock_name.delete(0, tk.END)
-        self.entry_product_stock_price.delete(0, tk.END)
+
+        textvar1 = "New product added!"
+        textvar2 = 'Product Name: '+str(product_name)+'\nProduct Price: '+str(product_price)+'\n\nAdded'
+        answer = self.ask_question(textvar1,textvar2)
+
+        if answer == 'yes':
+
+            ProductRepository().update_product_price_by_product_id(str(product_price),product_id[0])
+            ProductRepository().update_product_name_by_product_id(str(product_name),product_id[0])
+            self.product_list_in_stocktab()
+            self.delete_entry(self.entry_product_stock_name)
+            self.delete_entry(self.entry_product_stock_price)
+            self.tree_productstab.delete(*self.tree_productstab.get_children())
+
+            rows = ProductRepository().get_allproducts()
+            for row in rows:
+                self.insert_tree(self.tree_productstab,row[0], row[1])
+
+    def delete_product(self):
+
+        product_name = self.entry_product_stock_name.get()
+        product_id = ProductRepository().get_product_id_by_product_name(product_name)
+        product_price = self.entry_product_stock_price.get()
+
+        textvar1 = "Deleting Product"
+        textvar2 = '\nDo you want to DELETE this product: ?\nProduct Name: '+str(product_name)+'\nProduct Price: '+str(product_price)
+        answer = self.ask_question(textvar1,textvar2)
+
+        if answer == 'yes':
+
+            ProductRepository().delete_product_by_product_id(product_id)
+            self.product_list_in_stocktab()
+            self.delete_entry(self.entry_product_stock_name)
+            self.delete_entry(self.entry_product_stock_price)
+            self.tree_productstab.delete(*self.tree_productstab.get_children())
+
+            rows = ProductRepository().get_allproducts()
+            for row in rows:
+                self.insert_tree(self.tree_productstab,row[0], row[1])
+
+
+
+
+    
+
 
     
     
