@@ -29,9 +29,11 @@ class Stocktabb_bl():
         self.tree_productstab = args[21]
         
     def fillcolumn(self,stock_name, stock_weight, stock_unit):
+        
         self.insert_tree(self.tree_stocktab,str(stock_name).capitalize(), stock_weight, stock_unit)
 
     def displaySelectedItem(self,event):
+
         self.delete_entry(self.entry_stock_name)
         self.delete_entry(self.entry_stock_weight)
         self.delete_entry(self.entry_stock_unit)
@@ -45,6 +47,7 @@ class Stocktabb_bl():
             self.entry_stock_unit.insert(0, self.tree_stocktab.item(selectedItem)['values'][2])
 
     def populate_tree(self):
+
         self.tree_stocktab.delete(*self.tree_stocktab.get_children())
         allstock = StockRepository().get_allstock()
         for row in allstock:
@@ -96,8 +99,6 @@ class Stocktabb_bl():
         if answer == 'yes':
             self.insert_tree(self.tree_stocktab_newrecipe,str(get_stock_name).capitalize(), get_adding_stock_weight, get_stock_unit)
 
-
-
     def delete_recipe(self):
         self.tree_stocktab_newrecipe.delete(self.tree_stocktab_newrecipe.selection()[0])
 
@@ -125,7 +126,6 @@ class Stocktabb_bl():
             rows = ProductRepository().get_allproducts()
             for row in rows:
                 self.insert_tree(self.tree_productstab,row[0], row[1])
-
 
     def product_list_in_stocktab(self,*args):
         self.tree_product_stock.delete(*self.tree_product_stock.get_children())

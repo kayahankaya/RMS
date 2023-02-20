@@ -31,8 +31,13 @@ class Order:
         self.decimal_price = args[14]
         self.entry_update = args[15]
         self.sel = args[16]
+        self.table_cat = args[17]
+        self.default_db_merge = args[18]
+        self.part2_2 = args[19]
+        self.part1_1_2 = args[20]
 
     def table_status_func(self,input):
+
         table_status =  BillRepository().get_bill_id_by_table_name(input)
 
         return table_status
@@ -44,12 +49,25 @@ class Order:
     def on_select2(self):
 
         return self.default_db_merge
+    
+    def update_dropdown_table_cat(self):
 
+        options = []
+        for opt in ProductRepository().get_allcategory_of_products():
+            options.append(opt[0])
+        dropdown = self.option_menu(self.part2_2, self.table_cat, options)
+        dropdown.config(width=15 ,height=1,font=("Arial", 8), background="grey", activebackground="white")
+        dropdown.grid(row=0,column=0)
+
+        return self.table_cat
+        
     def set_productlist(self):
 
         liste = []
 
-        list_products = ProductRepository().get_allproducts()
+        cat = self.update_dropdown_table_cat()
+
+        list_products = ProductRepository().get_allproducts_by_category(cat.get())
 
         for row in list_products:
 
@@ -108,8 +126,7 @@ class Order:
         temp_bill = BillRepository().get_paids_by_table_name(selectedtable)
         BillRepository().update_remain_check_by_tablename(selectedtable)
         remaining_check = BillRepository().select_remain_check_by_tablename(selectedtable)
-        return (mustpay_current,temp_bill,remaining_check)
-                
+        return (mustpay_current,temp_bill,remaining_check)      
 
     def get_head_count(self):
         selectedtable = self.var.get()
@@ -302,7 +319,7 @@ class Order:
         for table_name in range(1,(OrderRepository().table_count())+1):
             options2.append('Table '+str(table_name))
         
-        dropdown_merge = self.option_menu(options2)
+        dropdown_merge = self.option_menu(self.part1_1_2, self.default_db_merge,options2)
         dropdown_merge.config(height=1, width=5 ,font=("Arial", 8), background="lightblue", activebackground="white")
         dropdown_merge.grid(row=0,column=1)
 

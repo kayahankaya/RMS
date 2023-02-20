@@ -121,9 +121,9 @@ def main(nb):
     pc_label_entry = tk.Entry(part1_1_2,width=10, textvariable=pc_label_entry_var)
     pc_label_entry.grid(row=0, column=3, padx=2, pady=2,sticky='nsew')
 
-    default_db = tk.StringVar(value='1')
-
     default_db_merge = tk.StringVar() 
+
+    default_db = tk.StringVar(value='1')
 
     options = ['1','2','3','4','5','6','7','8','9','10']
     dropdown = tk.OptionMenu(part1_2_ob, default_db, *options)
@@ -210,8 +210,8 @@ def main(nb):
         result = Decimal(price).quantize(Decimal('0.00'))
         return float(result)
 
-    def option_menu(options2):
-        return tk.OptionMenu(part1_1_2, default_db_merge, *options2)
+    def option_menu(frame, var, liste):
+        return tk.OptionMenu(frame, var, *liste)
 
     def ask_question(textvar1,textvar2):
         return messagebox.askquestion(textvar1,textvar2)
@@ -291,10 +291,16 @@ def main(nb):
                 Order.radio_buttons.append(radio_button)
                 radio_button.grid(row=k, column=i)
 
+    table_cat = tk.StringVar(value='Starters')
+
+    part2_2 = tk.Frame(part2)
+    part2_2.pack()
+
     orderobj = Order(tree_tabletab, default_db, var, 
     remainingcheck_entry,tree_productstab,checkentry_amount,
     pc_label_entry,tabletab,pop_up_table_first,pop_up_table_second,
-    make_rbtn,ask_question,show_error,option_menu,decimal_price,entry_update,sel)
+    make_rbtn,ask_question,show_error,option_menu,decimal_price,
+    entry_update,sel,table_cat,default_db_merge,part2_2,part1_1_2)
     
     dropdown.bind("<<OptionMenuSelect>>", orderobj.on_select)
 
@@ -334,15 +340,13 @@ def main(nb):
                 textvar2 = f"Orders in Table {Order.table_number} should be pay or delete!\nYou cannot delete table which has orders"
                 messagebox.showerror(textvar1, textvar2,tabletab)
 
-    def update_pro_list():
+    def update_pro_list(*args):
+        tree_productstab.delete(*tree_productstab.get_children())
         liste=[]
         liste = orderobj.set_productlist()
         for i in liste:
             product_name, product_price = i
             tree_productstab.insert('', tk.END, values=(product_name, product_price))
-    
-    for i in orderobj.set_productlist():
-        tree_productstab.insert('', tk.END, values=(i))
 
     make_rbtn()
 
@@ -373,6 +377,10 @@ def main(nb):
 
     deleteorder = tk.Button(part1_2_ob, text='Delete Order',height=1, width=10, command=lambda: orderobj.delete_order())
     deleteorder.pack(side=tk.RIGHT)
+
+    update_pro_list()
+
+    table_cat.trace("w", update_pro_list)
 
     return tree_productstab
 
