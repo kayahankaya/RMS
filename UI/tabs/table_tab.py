@@ -415,8 +415,8 @@ def main(nb):
             item_values = tree_tabletab.item(item)
             name = item_values['values'][1]
             list_id.append(item_values['values'][0])
-            temp_product = orderobj.get_product_by_product_name(name)
-            total_selected_price = total_selected_price + float(temp_product.product_price)
+            temp_product_price = orderobj.get_pro_price_by_product_name(name)
+            total_selected_price = total_selected_price + float(temp_product_price)
 
         checkentry_amount.delete(0, tk.END)
         checkentry_amount.insert(0, total_selected_price)

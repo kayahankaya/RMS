@@ -73,42 +73,124 @@ def main(nb):
     # Create the Tkinter canvas to display the graph
     var = tk.StringVar(value='People')
 
-    elements = ['People','Amount']
-    dropdown = tk.OptionMenu(info_change_fr , var, *elements)
-    dropdown.config(width=15 ,height=1,font=("Arial", 8), background="grey", activebackground="white")
-    dropdown.pack()
-
     def option_menu(frame,var,liste):
         return tk.OptionMenu(frame, var, *liste)
 
-    def insert_tree(tree,*args):
-        tree.insert('', tk.END, values=(args))
+    def insert_tree(i):
+        tree_finances.insert('', tk.END, values=(i[0],i[1],i[2]))
 
-    financeobj = Financetab_bl(start_time_var,end_time_var,cal1,cal2,tree_finances,
-    ax,canvas,info_change_fr,var,dropdown,option_menu,insert_tree)
+    def get_date_for_table():
 
-    cal1.bind("<<DateEntrySelected>>", financeobj.update_cal2)
+        time1 = start_time_var.get()+':00'
+        time2 = end_time_var.get()+':00'
+        date1 = str(cal1.get_date())
+        date2 = str(cal2.get_date())
+
+        tree_finances.delete(*tree_finances.get_children())
+
+        return time1,time2,date1,date2
+    
+    def sold_products():
+        
+        time1,time2,date1,date2 = get_date_for_table()
+
+        for i in financeobj.get_soldproduct_report(time1,time2,date1,date2):
+            insert_tree(i)
+
+    def sold_tables():
+
+        time1,time2,date1,date2 = get_date_for_table()
+
+        for i in financeobj.get_soldtables_report(time1,time2,date1,date2):
+            insert_tree(i)
+
+    def sold_users():
+
+        time1,time2,date1,date2 = get_date_for_table() 
+
+        for i in financeobj.get_solduser_report(time1,time2,date1,date2):
+            insert_tree(i)
+
+    def get_graph_input():
+
+        ax.clear()
+        amount_value = var.get()
+
+        date1 = str(cal1.get_date())
+        date2 = str(cal2.get_date())
+
+        return date1, date2, amount_value
+    
+    def set_graph_input(date_list,total_list):
+
+        ax.bar(date_list, total_list)
+        for i, v in enumerate(total_list):
+            ax.text(i, v+2, str(v), ha='center')
+        canvas.draw()
+        ax.autoscale(enable=True, axis='both', tight=1)
+
+    def daily_graph():
+
+        date1, date2, amount_value = get_graph_input() 
+
+        date_list, total_list = financeobj.daily_graph_report(date1,date2,amount_value)
+
+        set_graph_input(date_list, total_list)
+
+    def weekly_graph():
+
+        date1, date2, amount_value = get_graph_input()
+
+        date_list, total_list = financeobj.weekly_graph_report(date1,date2,amount_value)
+
+        set_graph_input(date_list, total_list)
+
+    def monthly_graph():
+
+        date1, date2, amount_value = get_graph_input()     
+
+        date_list, total_list = financeobj.monthly_graph_report(date1,date2,amount_value)
+
+        set_graph_input(date_list, total_list)
+
+    def update_cal2(event):
+        selected_date = cal1.get_date()
+        cal2.config(mindate=selected_date)
+
+    def selected_element():
+
+        return var
+
+    elements = ['People','Amount']
+
+    dropdown = tk.OptionMenu(info_change_fr,var,*elements)
+    dropdown.config(width=15 ,height=1,font=("Arial", 8), background="grey", activebackground="white")
+    dropdown.pack()
+
+    dropdown.bind("<<OptionMenuSelect>>", selected_element)
+
+    financeobj = Financetab_bl()
+
+    cal1.bind("<<DateEntrySelected>>", update_cal2)
     cal2.bind("<<DateEntrySelected>>")
 
-    getproduct_btn = tk.Button(financetree_fr, text='Get Products Sum', width=20, command=lambda: financeobj.sold_products())
+    getproduct_btn = tk.Button(financetree_fr, text='Get Products Sum', width=20, command=lambda: sold_products())
     getproduct_btn.pack(pady=5,padx=100,side=tk.LEFT)
 
-    gettable_btn = tk.Button(financetree_fr, text='Get Tables Sum', width=20, command=lambda: financeobj.sold_tables())
+    gettable_btn = tk.Button(financetree_fr, text='Get Tables Sum', width=20, command=lambda: sold_tables())
     gettable_btn.pack(pady=5,padx=100,side=tk.LEFT)
 
-    getuser_btn = tk.Button(financetree_fr, text='Get Users Sum', width=20, command=lambda: financeobj.sold_users())
+    getuser_btn = tk.Button(financetree_fr, text='Get Users Sum', width=20, command=lambda: sold_users())
     getuser_btn.pack(pady=5,padx=100,side=tk.RIGHT)
 
-    getdaily_graph_btn = tk.Button(graphframe, text='Get Daily Graph', width=20, command=lambda: financeobj.daily_graph())
+    getdaily_graph_btn = tk.Button(graphframe, text='Get Daily Graph', width=20, command=lambda: daily_graph())
     getdaily_graph_btn.pack(pady=5,padx=100,side=tk.LEFT)
 
-    getweekly_graph_btn = tk.Button(graphframe, text='Get Weekly Graph', width=20, command=lambda: financeobj.weekly_graph())
+    getweekly_graph_btn = tk.Button(graphframe, text='Get Weekly Graph', width=20, command=lambda: weekly_graph())
     getweekly_graph_btn.pack(pady=5,padx=100,side=tk.LEFT)
 
-    getmonthly_graph_btn = tk.Button(graphframe, text='Get Montly Graph', width=20, command=lambda: financeobj.monthly_graph())
+    getmonthly_graph_btn = tk.Button(graphframe, text='Get Montly Graph', width=20, command=lambda: monthly_graph())
     getmonthly_graph_btn.pack(pady=5,padx=100,side=tk.RIGHT)
-
-    financeobj.change_input_graph()
 
 if __name__ == "__main__":
     main()

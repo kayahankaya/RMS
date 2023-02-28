@@ -108,9 +108,9 @@ class Order:
 
     #product
 
-    def get_product_by_product_name(self,name):
-
-        return ProductRepository().get_product_by_product_name(name)
+    def get_pro_price_by_product_name(self,name):
+        temp_product = ProductRepository().get_product_by_product_name(name)
+        return temp_product.product_price
     
     def get_product_by_product_id(self,id):
 
